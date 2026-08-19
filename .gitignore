@@ -1,4 +1,8 @@
 __pycache__/
 *.pyc
 .DS_Store
-day1-*.png
+
+# Post assets and rendered output — deliverables, not part of the skills repo.
+day*-*.png
+example-deck.pdf
+slides/
