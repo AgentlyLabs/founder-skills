@@ -18,7 +18,7 @@ reference material and scripts it actually needs — not just a prompt.
 Clone into your personal skills directory to make a skill available in every project:
 
 ```bash
-git clone https://github.com/AgentlyOrg/skills.git /tmp/agently-skills && mkdir -p ~/.claude/skills && cp -r /tmp/agently-skills/skills/* ~/.claude/skills/
+git clone https://github.com/AgentlyLabs/skills.git /tmp/agently-skills && mkdir -p ~/.claude/skills && cp -r /tmp/agently-skills/skills/* ~/.claude/skills/
 ```
 
 Or copy a single skill into one project, so it ships with the repo and your team gets it:
