@@ -127,11 +127,11 @@ the mechanism. This table is the analytical core of the audit:
 
 | Clicks | Impressions | Position | Mechanism | Where to look |
 |---|---|---|---|---|
-| Down | Flat | Flat | CTR loss — SERP layout, AI Overview, or title change | Title/meta, SERP features, competitor snippets |
-| Down | Down | Down | Genuine ranking loss | Content freshness, lost links, competitor gains |
-| Down | Down | Flat | Demand loss or seasonality | Compare year-over-year before acting |
-| Flat | Up | Down | Broader but weaker matching | New irrelevant queries diluting the average |
-| Down | Flat | Down | Rank slide within page 1 | Often precedes a larger drop; act early |
+| ↓ down | → flat | → flat | CTR loss — SERP layout, AI Overview, or title change | Title/meta, SERP features, competitor snippets |
+| ↓ down | ↓ down | ↓ worse | Genuine ranking loss | Content freshness, lost links, competitor gains |
+| ↓ down | ↓ down | → flat | Demand loss or seasonality | Compare year-over-year before acting |
+| → flat | ↑ up | ↓ worse | Broader but weaker matching | New irrelevant queries diluting the average |
+| ↓ down | → flat | ↓ worse | Rank slide within page 1 | Often precedes a larger drop; act early |
 
 The year-over-year pull exists specifically to stop the third row being misdiagnosed as
 the second. Seasonal declines get "wait" as a recommendation, and saying so builds more
