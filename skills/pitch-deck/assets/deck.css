@@ -1,0 +1,337 @@
+/* ==========================================================================
+   Pitch deck design system
+   Canvas 1600x900, rendered at 2x. Author at 1x.
+   Override the :root block (e.g. with scripts/extract_brand.py output) to
+   rebrand; do not edit the rules below it.
+   ========================================================================== */
+
+:root {
+  /* --- Palette: default theme. Replace this block to rebrand. --- */
+  --bg:        #0e0d13;
+  --surface:   #16161e;
+  --surface-2: #151419;
+  --border:    #212025;
+  --ink:       #fbfaf6;
+  --body:      #c9c9d1;
+  --muted:     #6e6b7a;
+  --accent:    #c6a4f2;
+  --accent-dim:#8b6fb0;
+  --grad: linear-gradient(100deg, #f0dedc 0%, #dec4eb 45%, #c6a4f2 100%);
+
+  /* --- Type --- */
+  --sans: "Inter", -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --mono: "SF Mono", ui-monospace, Menlo, Monaco, "Courier New", monospace;
+
+  /* --- Geometry --- */
+  --margin: 60px;
+  --radius: 14px;
+  --gap: 5%;
+}
+
+/* Chrome's print-to-pdf reads this for page size. Must match .slide exactly,
+   or slides land on the wrong page boundaries. */
+@page { size: 1600px 900px; margin: 0; }
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #000;
+  font-family: var(--sans);
+  /* Inherited colour must be readable: anything that forgets an explicit colour
+     would otherwise fall back to black and vanish against the slide. */
+  color: var(--body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+}
+
+/* ---------- Slide shell ---------- */
+
+.slide {
+  position: relative;
+  width: 1600px;
+  height: 900px;
+  background: var(--bg);
+  overflow: hidden;
+  page-break-after: always;
+  break-after: page;
+}
+.slide:last-child { page-break-after: auto; break-after: auto; }
+
+/* Content band: the top and bottom quarters stay empty by design. */
+.band {
+  position: absolute;
+  left: var(--margin);
+  right: var(--margin);
+  top: 22%;
+  bottom: 18%;
+  display: flex;
+  align-items: center;
+}
+
+/* ---------- Chrome ---------- */
+
+.chrome-tl, .chrome-tr, .chrome-bl, .chrome-br {
+  position: absolute;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.chrome-tl { left: var(--margin);  top: 58px; }
+.chrome-tr { right: var(--margin); top: 58px; }
+.chrome-bl { left: var(--margin);  bottom: 52px; }
+.chrome-br { right: var(--margin); bottom: 52px; }
+
+/* ---------- Text roles ---------- */
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 18px;
+}
+
+h1, h2 { color: var(--ink); font-weight: 800; }
+
+.h-xl { font-size: 46px; font-weight: 700; line-height: 1.2;  letter-spacing: -0.02em; }
+.h-l  { font-size: 76px; line-height: 1.18; letter-spacing: -0.025em; }
+.h-m  { font-size: 54px; line-height: 1.15; letter-spacing: -0.02em; }
+
+.accent {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.body {
+  font-size: 23px;
+  line-height: 1.45;
+  color: var(--body);
+  max-width: 30ch;
+}
+.body.wide { max-width: 58ch; }
+.body b { color: var(--ink); font-weight: 600; }
+.body-sm { font-size: 19px; line-height: 1.5; color: var(--body); }
+
+.metric-line {
+  font-family: var(--mono);
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  margin-top: 26px;
+}
+
+.micro {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* ---------- Surfaces ---------- */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.card.hi {
+  background: linear-gradient(160deg,
+    color-mix(in srgb, var(--accent) 14%, transparent),
+    color-mix(in srgb, var(--accent) 4%, transparent));
+  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  box-shadow: 0 0 60px color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.pill {
+  display: inline-block;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-size: 13px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.pill.mono { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; }
+.pill.hi { border-color: color-mix(in srgb, var(--accent) 45%, transparent); color: var(--accent); }
+.pill-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+
+.bar { height: 4px; border-radius: 999px; background: var(--border); overflow: hidden; }
+.bar > i { display: block; height: 100%; border-radius: 999px; background: var(--grad); }
+
+/* ---------- Proof-point strip ---------- */
+
+.proof {
+  border-top: 1px solid var(--border);
+  padding-top: 22px;
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+}
+.proof > span {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.proof > span:last-child { color: var(--ink); }
+
+/* ==========================================================================
+   Archetypes
+   ========================================================================== */
+
+/* 1 + 8. Cover and closing: optical centre sits slightly above true centre. */
+.s-cover .band, .s-closing .band {
+  top: 0; bottom: 0;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding-bottom: 5%;
+}
+.s-cover .logo, .s-closing .logo {
+  font-size: 54px; font-weight: 800; color: var(--ink);
+  letter-spacing: -0.03em; margin-bottom: 30px;
+}
+.s-closing .h-xl { max-width: 22ch; margin-bottom: 26px; }
+.s-cover .tagline { font-size: 28px; color: var(--body); font-weight: 500; }
+.s-closing .url { font-size: 22px; font-weight: 700; color: var(--ink); }
+
+/* 2. Statement: no artifact. The emptiness is the design. */
+.s-statement .band { flex-direction: column; justify-content: center; align-items: flex-start; }
+.s-statement .h-l { max-width: 20ch; margin-bottom: 34px; }
+.s-statement .proof { width: 100%; margin-top: 48px; }
+
+/* 3. Split: copy 42% / artifact 53%. */
+.s-split .band { justify-content: space-between; }
+.s-split .copy { width: 42%; }
+.s-split .art  { width: 53%; }
+/* Headlines run smaller here than on statement slides. At 76px in a 42% column
+   they wrap to three lines, which strands the gradient across a line break and
+   leaves the first accented word looking plain white. */
+.s-split .h-l { font-size: 62px; line-height: 1.12; margin-bottom: 24px; max-width: 17ch; }
+.s-split .body { max-width: 28ch; }
+
+/* 4. Diagram: headline top-left, full-width figure. */
+.s-diagram .band { top: 16%; bottom: 12%; flex-direction: column; align-items: stretch; }
+.s-diagram .h-m { margin-bottom: 40px; max-width: 26ch; }
+.s-diagram .figure { position: relative; flex: 1; }
+
+/* 5. Ranked rows. */
+.s-rows .band { flex-direction: column; align-items: stretch; justify-content: center; }
+.s-rows .h-m { margin-bottom: 36px; }
+.s-rows .row {
+  display: grid;
+  grid-template-columns: 260px 1fr 130px 110px;
+  align-items: center;
+  gap: 28px;
+  padding: 24px 28px;
+  margin-bottom: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.s-rows .row.hi {
+  background: linear-gradient(100deg,
+    color-mix(in srgb, var(--accent) 12%, transparent),
+    color-mix(in srgb, var(--accent) 3%, transparent));
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+.s-rows .row .name { font-size: 20px; font-weight: 700; color: var(--ink); }
+.s-rows .row .big  { font-size: 34px; font-weight: 800; text-align: right;
+                     letter-spacing: -0.02em; color: var(--ink); }
+
+/* 6. Metric trio. */
+.s-metrics .band { flex-direction: column; align-items: stretch; justify-content: center; }
+.s-metrics .h-m { margin-bottom: 40px; }
+.s-metrics .grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.s-metrics .cell { padding: 40px 36px; border-left: 1px solid var(--border); }
+.s-metrics .cell:first-child { border-left: 0; }
+.s-metrics .num { font-size: 90px; font-weight: 800; line-height: 1; letter-spacing: -0.03em; }
+.s-metrics .cell .micro { margin: 16px 0 14px; }
+
+/* 7. Profiles. */
+.s-profiles .band { flex-direction: column; align-items: stretch; justify-content: center; }
+.s-profiles .h-m { margin-bottom: 34px; }
+.s-profiles .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0;
+                    border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+.s-profiles .who { padding: 38px 40px; border-left: 1px solid var(--border); }
+.s-profiles .who:first-child { border-left: 0; }
+.s-profiles .avatar { width: 78px; height: 78px; border-radius: 999px; object-fit: cover;
+                      border: 1px solid var(--border); margin-bottom: 22px; background: var(--surface-2); }
+.s-profiles .who .name { font-size: 26px; font-weight: 700; color: var(--ink); }
+.s-profiles .who .role { font-family: var(--mono); font-size: 12px; letter-spacing: 0.16em;
+                         text-transform: uppercase; color: var(--accent); margin: 8px 0 18px; }
+.s-profiles .timeline {
+  margin-top: 14px; padding: 26px 32px;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  display: flex; align-items: center; gap: 40px;
+}
+.s-profiles .timeline .track { flex: 1; display: flex; justify-content: space-between;
+                               border-top: 1px solid var(--border); padding-top: 16px; }
+
+/* ==========================================================================
+   Artifacts
+   ========================================================================== */
+
+.artifact {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-family: var(--mono);
+  overflow: hidden;
+}
+.artifact .a-head, .artifact .a-foot {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 18px 24px;
+  font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted);
+}
+.artifact .a-head { border-bottom: 1px solid var(--border); }
+.artifact .a-foot { border-top: 1px solid var(--border); }
+.artifact .a-foot .hi { color: var(--accent); }
+.artifact .rows { padding: 14px 24px; }
+.artifact .r { display: flex; gap: 22px; font-size: 15px; line-height: 1.7; color: var(--body); }
+.artifact .r .t { color: var(--muted); }
+.artifact .r em { color: var(--accent); font-style: normal; }
+.artifact .dot { display: inline-block; width: 6px; height: 6px; border-radius: 999px;
+                 background: var(--accent); margin-right: 9px; vertical-align: middle; }
+
+/* Board */
+.board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.board .col-head { display: flex; justify-content: space-between; align-items: baseline;
+                   border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px; }
+.board .col-head b { font-size: 20px; font-weight: 700; color: var(--ink); }
+.board .t-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+                 padding: 16px 16px 18px; margin-bottom: 12px; }
+.board .t-card .title { font-family: var(--sans); font-size: 16px; font-weight: 600; color: var(--ink); }
+.board .t-card .st { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+                     color: var(--muted); margin: 10px 0; }
+
+/* Document stack */
+.stack { position: relative; height: 100%; }
+.stack .doc { position: absolute; width: 300px; padding: 22px;
+              background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.stack .skel { height: 7px; border-radius: 999px; background: var(--border); margin-bottom: 10px; }
+
+/* Chip constellation */
+.chip { display: inline-flex; align-items: center; gap: 9px;
+        background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+        padding: 9px 14px; font-family: var(--mono); font-size: 13px; color: var(--body); }
+.chip .mark { width: 16px; height: 16px; border-radius: 4px; background: var(--surface-2); }

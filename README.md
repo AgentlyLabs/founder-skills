@@ -12,6 +12,7 @@ reference material and scripts it actually needs — not just a prompt.
 | Skill | What it does |
 |---|---|
 | [`seo-audit`](skills/seo-audit) | Full SEO audit from Google Search Console data via MCP — striking-distance queries, CTR gaps measured against the site's own position curve, cannibalization detection, and traffic-decay diagnosis, output as a prioritized report with the impact arithmetic shown. |
+| [`pitch-deck`](skills/pitch-deck) | Investor-grade pitch decks built as HTML and rendered to a 16:9 PDF. A dark editorial design system whose palette is derived from your own website, an eleven-slide narrative arc, and "product artifact" visuals instead of stock imagery. |
 
 ## Install
 
@@ -37,15 +38,19 @@ small, `references/` holds the detail that only gets read when it's needed, and 
 holds the deterministic work that shouldn't be re-derived by a model on every run.
 
 ```
-skills/seo-audit/
+skills/pitch-deck/
 ├── SKILL.md
 ├── references/
-│   ├── gsc-api-surface.md
-│   ├── analyses.md
-│   ├── onpage-checks.md
-│   └── report-template.md
+│   ├── narrative.md
+│   ├── design-system.md
+│   ├── slide-archetypes.md
+│   └── artifacts.md
+├── assets/
+│   ├── deck.css
+│   └── example-deck.html
 └── scripts/
-    └── analyze_gsc.py
+    ├── build_deck.py
+    └── extract_brand.py
 ```
 
 ## Contributing

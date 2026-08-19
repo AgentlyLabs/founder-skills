@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Example deck</title>
+<link rel="stylesheet" href="deck.css">
+<!-- To rebrand, generate brand.css with scripts/extract_brand.py and link it
+     here, after deck.css, so its :root block wins:
+     <link rel="stylesheet" href="brand.css"> -->
+</head>
+<body>
+
+<!-- ============ 01 · COVER ============ -->
+<div class="slide s-cover">
+  <div class="chrome-tl">Seed · 2026</div>
+  <div class="chrome-tr">01 / 05</div>
+  <div class="band">
+    <div class="logo">Northwind</div>
+    <div class="tagline">Your warehouse. Your rules.
+      <span class="accent">One planner that closes the loop.</span></div>
+  </div>
+  <div class="chrome-bl">northwind.example</div>
+  <div class="chrome-br">hello@northwind.example</div>
+</div>
+
+<!-- ============ 02 · PROBLEM (split + log artifact) ============ -->
+<div class="slide s-split">
+  <div class="chrome-tl">Problem</div>
+  <div class="chrome-tr">02 / 05</div>
+  <div class="band">
+    <div class="copy">
+      <div class="eyebrow">The cost nobody books</div>
+      <h1 class="h-l">Every reorder is <span class="accent">a guess.</span></h1>
+      <p class="body">The planner opens four systems to answer one question, then commits
+        capital on instinct. <b>Nine hours a week, and the number is still wrong.</b></p>
+    </div>
+    <div class="art">
+      <div class="artifact">
+        <div class="a-head">
+          <span><i class="dot"></i>Tuesday · 08:40 — 08:52</span>
+          <span>The weekly ritual</span>
+        </div>
+        <div class="rows">
+          <div class="r"><span class="t">08:40</span><span>open <em>ERP</em> · export on-hand</span></div>
+          <div class="r"><span class="t">08:43</span><span>open supplier portal · check lead time</span></div>
+          <div class="r"><span class="t">08:45</span><span>paste into <em>spreadsheet</em></span></div>
+          <div class="r"><span class="t">08:47</span><span>open email · chase confirmation</span></div>
+          <div class="r"><span class="t">08:50</span><span>paste into <em>spreadsheet</em></span></div>
+          <div class="r"><span class="t">08:52</span><span>commit PO · no forecast attached</span></div>
+        </div>
+        <div class="a-foot">
+          <span>↻ repeat × 40 / week</span>
+          <span class="hi">9h / week lost</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 03 · THE BET (statement, no artifact) ============ -->
+<div class="slide s-statement">
+  <div class="chrome-tl">The bet</div>
+  <div class="chrome-tr">03 / 05</div>
+  <div class="band">
+    <h1 class="h-l">Forecasting isn't the hard part.
+      <span class="accent">Acting on it is.</span></h1>
+    <p class="body wide">Every vendor sells a better prediction and stops at the dashboard.
+      Whoever writes the purchase order owns the workflow — and the workflow is where the
+      switching cost lives.</p>
+    <div class="proof">
+      <span>Forecast accuracy plateaued in 2024</span>
+      <span>ERP APIs finally opened</span>
+      <span>Execution compounds — dashboards don't.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 04 · MARKET (ranked rows) ============ -->
+<div class="slide s-rows">
+  <div class="chrome-tl">Market</div>
+  <div class="chrome-tr">04 / 05</div>
+  <div class="band">
+    <h2 class="h-m">Start at the single-site operator.
+      <span class="accent">Expand to the network.</span></h2>
+
+    <div class="row hi">
+      <div>
+        <div class="name">Single-site operator</div>
+        <div class="micro">Beachhead · entry wedge</div>
+      </div>
+      <div class="bar"><i style="width:22%"></i></div>
+      <div class="micro">~48K in US<br>$4.8k / yr</div>
+      <div class="big accent">$0.2B</div>
+    </div>
+
+    <div class="row">
+      <div>
+        <div class="name">Regional · 2–10 sites</div>
+        <div class="micro">Pull from operator adoption</div>
+      </div>
+      <div class="bar"><i style="width:46%"></i></div>
+      <div class="micro">~12K cos<br>$26k / yr</div>
+      <div class="big">$0.3B</div>
+    </div>
+
+    <div class="row">
+      <div>
+        <div class="name">National · 10–100 sites</div>
+        <div class="micro">Replaces planning headcount</div>
+      </div>
+      <div class="bar"><i style="width:74%"></i></div>
+      <div class="micro">~2.1K cos<br>$180k / yr</div>
+      <div class="big">$0.4B</div>
+    </div>
+
+    <div class="proof" style="margin-top:26px">
+      <span>US bottom-up · planning + inventory software spend</span>
+      <span>US SAM = $0.9B · global materially larger</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 05 · TRACTION (metric trio) ============ -->
+<div class="slide s-metrics">
+  <div class="chrome-tl">Traction</div>
+  <div class="chrome-tr">05 / 05</div>
+  <div class="band">
+    <h2 class="h-m">Pilots are converting <span class="accent">faster than we modelled.</span></h2>
+    <div class="grid">
+      <div class="cell">
+        <div class="num accent">12</div>
+        <div class="micro">Pilots · complete</div>
+        <p class="body-sm">Single-site and regional operators.</p>
+      </div>
+      <div class="cell">
+        <div class="num accent">9</div>
+        <div class="micro">Converted to paid</div>
+        <p class="body-sm">75% pilot-to-paid. Two expanded within a quarter.</p>
+      </div>
+      <div class="cell">
+        <div class="num accent">312</div>
+        <div class="micro">Waitlist</div>
+        <p class="body-sm">Inbound only. No paid acquisition.</p>
+      </div>
+    </div>
+    <div class="proof" style="margin-top:26px">
+      <span>As of April 2026</span>
+      <span>Pilot → paid = 75%</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
