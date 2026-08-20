@@ -13,6 +13,7 @@ reference material and scripts it actually needs — not just a prompt.
 |---|---|
 | [`seo-audit`](skills/seo-audit) | Full SEO audit from Google Search Console data via MCP — striking-distance queries, CTR gaps measured against the site's own position curve, cannibalization detection, and traffic-decay diagnosis, output as a prioritized report with the impact arithmetic shown. |
 | [`pitch-deck`](skills/pitch-deck) | Investor-grade pitch decks built as HTML and rendered to a 16:9 PDF. A dark editorial design system whose palette is derived from your own website, an eleven-slide narrative arc, and "product artifact" visuals instead of stock imagery. |
+| [`cold-email`](skills/cold-email) | Cold outbound that reaches an inbox and earns a reply. Audits the sending domain's SPF/DKIM/DMARC against the actual Google and Yahoo bulk-sender rules, applies the consent regime for the recipient's jurisdiction (CAN-SPAM, GDPR/ePrivacy, CASL), and lints the draft against reply rate — not the open rate, which is no longer measurable. |
 
 ## Install
 

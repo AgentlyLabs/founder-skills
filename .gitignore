@@ -6,3 +6,6 @@ __pycache__/
 day*-*.png
 example-deck.pdf
 slides/
+
+# Demo videos for posts.
+day*-*.mp4
