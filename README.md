@@ -26,6 +26,8 @@ finance, support, and product analytics are not yet, and this table is the hones
 
 ## Install
 
+### Claude Code
+
 Clone into your personal skills directory to make every skill available in every project:
 
 ```bash
@@ -37,6 +39,80 @@ Or copy a single skill into one project, so it ships with the repo and your team
 ```bash
 mkdir -p .claude/skills && cp -r /tmp/founder-skills/skills/cold-email .claude/skills/
 ```
+
+### Claude Desktop and claude.ai
+
+Skills upload one at a time, as a zip. Build them all with:
+
+```bash
+git clone https://github.com/AgentlyLabs/founder-skills.git && cd founder-skills && ./scripts/package.sh
+```
+
+That writes `dist/pitch-deck.zip`, `dist/cold-email.zip`, `dist/seo-audit.zip` and
+`dist/wireframe.zip`. Then, in Claude:
+
+1. Open **Settings → Capabilities** and turn on **Code execution and file creation**.
+   That toggle is what gates Skills — without it the Skills menu doesn't appear. On Team
+   and Enterprise an owner enables it for the org under **Settings → Skills** instead.
+2. Go to **Customize → Skills**, click **+**, choose **Upload skill**, and pick a zip.
+3. Repeat for each skill, then toggle the ones you want on.
+
+The archive has to contain the skill *folder* — `SKILL.md` sits one level down, never at
+the root of the zip. `package.sh` gets this right; zipping from inside a skill directory
+is the most common reason an upload is rejected.
+
+Uploads are per-account. They aren't shared with your organization, and they don't sync
+to Claude Code — each surface is installed separately.
+
+### What runs where
+
+Claude Code runs a skill on your machine, with your network and your binaries. Claude
+Desktop and claude.ai run it in a sandbox, which changes what some of the scripts can do:
+
+| Skill | Claude Code | Claude Desktop / claude.ai |
+|---|---|---|
+| [`wireframe`](skills/wireframe) | Full | Full — `validate.py` is pure stdlib |
+| [`cold-email`](skills/cold-email) | Full | Copy linting works; the domain audit needs `dig`, which the sandbox doesn't have |
+| [`pitch-deck`](skills/pitch-deck) | Full | The HTML deck builds; the 16:9 PDF render shells out to Chrome and won't |
+| [`seo-audit`](skills/seo-audit) | Full | Needs a Search Console connector — see below |
+
+Nothing here is broken on Desktop. The parts that reach outside the sandbox are the parts
+that don't run, and each skill says so rather than guessing at the answer it can't measure.
+If you want the live domain audit or the rendered PDF, use Claude Code.
+
+### Connecting Search Console for `seo-audit`
+
+`seo-audit` doesn't scrape anything or estimate rankings from the outside. It reads your
+own Google Search Console data through an MCP connector, so one has to be connected
+before it can pull.
+
+There is no single canonical GSC MCP server, and the skill deliberately doesn't hardcode
+tool names — it discovers whatever you have connected and maps it onto the Search Console
+API surface documented in
+[`references/gsc-api-surface.md`](skills/seo-audit/references/gsc-api-surface.md).
+
+**Claude Desktop** — **Settings → Connectors → Add custom connector**, paste the server
+URL, then authorize it against the Google account that owns the property. For a server
+that runs locally rather than over HTTP, install it as a desktop extension under
+**Settings → Extensions**.
+
+**Claude Code** — add it from the terminal:
+
+```bash
+claude mcp add search-console -- <your-gsc-server-command>
+```
+
+Either way, confirm the connection can actually see your property before running an audit.
+Property type matters: a domain property (`sc-domain:example.com`) aggregates every
+subdomain and protocol, a URL-prefix property (`https://example.com/`) does not. Auditing
+the second and reporting it as whole-site truth is the most common invisible error in an
+SEO audit.
+
+With no connector at all, the skill tells you and offers a best-practice-only audit from
+crawling the live site, clearly labeled as having no performance data behind it. It won't
+quietly degrade into a generic checklist.
+
+---
 
 Claude picks a skill up automatically when a request matches its description — you don't
 need to invoke it by name. "Why is nobody replying to my outreach" reaches for
