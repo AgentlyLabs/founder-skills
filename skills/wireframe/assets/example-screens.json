@@ -1,0 +1,498 @@
+{
+  "meta": {
+    "product": "Relay",
+    "version": "0.1.0",
+    "device": "desktop",
+    "platform": "web",
+    "auth": "teams",
+    "nonGoals": [
+      "No live chat widget in v1 — email only, chat conversations are read-only imports.",
+      "No SLA timers, no CSAT surveys, no reporting dashboard.",
+      "No per-teammate permissions beyond agent and admin.",
+      "Relay drafts replies; it never sends one without a human pressing Send."
+    ]
+  },
+
+  "entities": {
+    "conversation": {
+      "label": "Conversation",
+      "fields": [
+        { "name": "id", "type": "uuid", "required": true },
+        { "name": "subject", "type": "string", "required": true },
+        { "name": "status", "type": "enum", "required": true, "values": ["open", "snoozed", "closed"] },
+        { "name": "channel", "type": "enum", "required": true, "values": ["email", "chat"] },
+        { "name": "customer", "type": "ref[customer]", "required": true },
+        { "name": "assignee", "type": "ref[teammate]", "required": false, "notes": "null means unassigned; the inbox shows a dash" },
+        { "name": "lastMessageAt", "type": "datetime", "required": true },
+        { "name": "waitingMinutes", "type": "int", "required": true, "notes": "derived: now - lastMessageAt where direction = inbound, else 0" }
+      ]
+    },
+    "message": {
+      "label": "Message",
+      "fields": [
+        { "name": "id", "type": "uuid", "required": true },
+        { "name": "conversation", "type": "ref[conversation]", "required": true },
+        { "name": "author", "type": "string", "required": true },
+        { "name": "direction", "type": "enum", "required": true, "values": ["inbound", "outbound"] },
+        { "name": "body", "type": "text", "required": true },
+        { "name": "sentAt", "type": "datetime", "required": true },
+        { "name": "draftedByAi", "type": "bool", "required": true, "notes": "outbound only; drives the drafted-by-Relay label in the thread" }
+      ]
+    },
+    "customer": {
+      "label": "Customer",
+      "fields": [
+        { "name": "id", "type": "uuid", "required": true },
+        { "name": "name", "type": "string", "required": true },
+        { "name": "email", "type": "email", "required": true },
+        { "name": "plan", "type": "enum", "required": true, "values": ["free", "pro", "scale"] },
+        { "name": "signedUpAt", "type": "date", "required": true }
+      ]
+    },
+    "macro": {
+      "label": "Macro",
+      "fields": [
+        { "name": "id", "type": "uuid", "required": true },
+        { "name": "title", "type": "string", "required": true, "notes": "unique per workspace; the uniqueness error is in the copy deck" },
+        { "name": "body", "type": "text", "required": true },
+        { "name": "usedCount", "type": "int", "required": true },
+        { "name": "updatedAt", "type": "date", "required": true }
+      ]
+    },
+    "teammate": {
+      "label": "Teammate",
+      "fields": [
+        { "name": "id", "type": "uuid", "required": true },
+        { "name": "name", "type": "string", "required": true },
+        { "name": "email", "type": "email", "required": true },
+        { "name": "role", "type": "enum", "required": true, "values": ["agent", "admin"] }
+      ]
+    }
+  },
+
+  "fixtures": {
+    "customer": [
+      { "id": "cus-1", "name": "Dana Whitfield", "email": "dana@northloop.io", "plan": "pro", "signedUpAt": "2025-11-02" },
+      { "id": "cus-2", "name": "Marcus Oyelaran", "email": "marcus@feldspar.dev", "plan": "scale", "signedUpAt": "2024-06-18" },
+      { "id": "cus-3", "name": "Priya Raghunathan", "email": "priya@quietmode.app", "plan": "free", "signedUpAt": "2026-08-09" }
+    ],
+    "teammate": [
+      { "id": "tm-1", "name": "Alex Nwosu", "email": "alex@relay.app", "role": "admin" },
+      { "id": "tm-2", "name": "Sam Reyes", "email": "sam@relay.app", "role": "agent" }
+    ],
+    "conversation": [
+      { "id": "conv-1", "subject": "Refund for a duplicate charge", "status": "open", "channel": "email", "customer": "cus-1", "assignee": "tm-2", "lastMessageAt": "2026-08-25T09:14:00Z", "waitingMinutes": 41 },
+      { "id": "conv-2", "subject": "SSO login loop on staging", "status": "open", "channel": "email", "customer": "cus-2", "assignee": null, "lastMessageAt": "2026-08-25T09:47:00Z", "waitingMinutes": 8 },
+      { "id": "conv-3", "subject": "Can I export my data?", "status": "snoozed", "channel": "chat", "customer": "cus-3", "assignee": "tm-1", "lastMessageAt": "2026-08-24T16:30:00Z", "waitingMinutes": 0 }
+    ],
+    "message": [
+      { "id": "msg-1", "conversation": "conv-1", "author": "Dana Whitfield", "direction": "inbound", "body": "We were billed twice for August. Same amount, four minutes apart.", "sentAt": "2026-08-25T09:14:00Z", "draftedByAi": false },
+      { "id": "msg-2", "conversation": "conv-1", "author": "Sam Reyes", "direction": "outbound", "body": "Checking the payment log now — I'll come back within the hour.", "sentAt": "2026-08-25T09:22:00Z", "draftedByAi": false },
+      { "id": "msg-3", "conversation": "conv-1", "author": "Dana Whitfield", "direction": "inbound", "body": "Thanks. The second charge is the one to void, it has no invoice attached.", "sentAt": "2026-08-25T09:31:00Z", "draftedByAi": false }
+    ],
+    "macro": [
+      { "id": "mac-1", "title": "Refund issued", "body": "I've refunded the duplicate charge. It lands back on your card in 5-10 business days.", "usedCount": 214, "updatedAt": "2026-07-30" },
+      { "id": "mac-2", "title": "Escalated to engineering", "body": "I've passed this to our engineers with your account details attached.", "usedCount": 88, "updatedAt": "2026-08-11" },
+      { "id": "mac-3", "title": "Export instructions", "body": "You can export everything from Settings, Data, Export. The file arrives by email.", "usedCount": 37, "updatedAt": "2026-06-02" }
+    ]
+  },
+
+  "flows": [
+    {
+      "id": "triage-and-reply",
+      "label": "Triage the inbox and answer one conversation",
+      "primary": true,
+      "steps": [
+        { "screen": "inbox", "action": "inbox.table", "to": "conversation" },
+        { "screen": "conversation", "action": "conversation.select-macro", "to": "conversation" },
+        { "screen": "conversation", "action": "conversation.btn-send", "to": "conversation" }
+      ]
+    },
+    {
+      "id": "escalate",
+      "label": "Escalate a conversation to engineering",
+      "primary": false,
+      "steps": [
+        { "screen": "conversation", "action": "conversation.btn-escalate", "to": "conversation.modal-escalate" },
+        { "screen": "conversation.modal-escalate", "action": "conversation.modal-escalate.btn-confirm", "to": "conversation" }
+      ]
+    },
+    {
+      "id": "manage-macros",
+      "label": "Write a new macro",
+      "primary": false,
+      "steps": [
+        { "screen": "macros", "action": "macros.btn-new", "to": "macro-form" },
+        { "screen": "macro-form", "action": "macro-form.btn-save", "to": "macros" }
+      ]
+    },
+    {
+      "id": "delete-macro",
+      "label": "Delete a macro (destructive)",
+      "primary": false,
+      "steps": [
+        { "screen": "macros", "action": "macros.menu", "to": "macros.modal-delete" },
+        { "screen": "macros.modal-delete", "action": "macros.modal-delete.btn-delete", "to": "macros" }
+      ]
+    }
+  ],
+
+  "screens": [
+    {
+      "id": "inbox",
+      "route": "/inbox",
+      "title": "Inbox",
+      "purpose": "See every conversation waiting on a human and pick the one to answer next.",
+      "device": "desktop",
+      "entryPoints": ["sign-in", "nav-side", "email notification link"],
+      "regions": [
+        { "id": "inbox.nav", "role": "nav", "components": [
+          { "id": "inbox.nav-side", "type": "nav-side",
+            "props": { "current": "inbox", "destinations": ["Inbox", "Macros", "Settings"] },
+            "action": { "on": "click", "do": "navigate", "target": "macros" } }
+        ] },
+        { "id": "inbox.main", "role": "main", "components": [
+          { "id": "inbox.header", "type": "header",
+            "props": { "title": "Inbox", "subtitle": "2 open · 1 snoozed · longest wait 41m" } },
+          { "id": "inbox.filter-bar", "type": "filter-bar",
+            "props": { "target": "inbox.table" },
+            "children": [
+              { "id": "inbox.search", "type": "search",
+                "props": { "placeholder": "Search conversations", "filters": "inbox.table", "matches": ["conversation.subject", "customer.name", "customer.email"] },
+                "action": { "on": "input", "do": "none" } },
+              { "id": "inbox.filter-status", "type": "select",
+                "props": { "label": "Status", "options": ["All", "Open", "Snoozed", "Closed"], "default": "Open" },
+                "binds": "conversation.status",
+                "action": { "on": "change", "do": "none" } },
+              { "id": "inbox.filter-assignee", "type": "select",
+                "props": { "label": "Assignee", "options": ["Anyone", "Unassigned", "Alex Nwosu", "Sam Reyes"], "default": "Anyone" },
+                "binds": "conversation.assignee",
+                "action": { "on": "change", "do": "none" } },
+              { "id": "inbox.filter-clear", "type": "button",
+                "props": { "label": "Clear", "variant": "ghost", "note": "resets both selects and the search field to their defaults" },
+                "action": { "on": "click", "do": "none" } }
+            ] },
+          { "id": "inbox.table", "type": "table",
+            "props": {
+              "columns": [
+                { "label": "Subject", "binds": "conversation.subject", "align": "left", "sorts": false },
+                { "label": "Customer", "binds": "customer.name", "align": "left", "sorts": true },
+                { "label": "Status", "binds": "conversation.status", "align": "left", "sorts": true },
+                { "label": "Waiting", "binds": "conversation.waitingMinutes", "align": "right", "sorts": true },
+                { "label": "Assignee", "binds": "conversation.assignee", "align": "right", "sorts": true }
+              ],
+              "rowCount": 3,
+              "sortDefault": "waitingMinutes desc",
+              "rowAction": { "do": "navigate", "target": "conversation" }
+            } },
+          { "id": "inbox.pagination", "type": "pagination",
+            "props": { "variant": "pages", "pageSize": 25 },
+            "action": { "on": "click", "do": "none" } }
+        ] }
+      ],
+      "states": {
+        "default": { "render": true, "file": "screens/inbox.html" },
+        "empty": { "render": true, "file": "screens/inbox.empty.html",
+          "trigger": "no conversation matches the active filters, including a brand-new workspace",
+          "copy": { "title": "Nothing waiting on you", "body": "New email to your support address lands here within a few seconds.", "action": "Clear filters" } },
+        "loading": { "render": true, "file": "screens/inbox.loading.html", "variant": "skeleton" },
+        "error": { "render": true, "file": "screens/inbox.error.html",
+          "trigger": "the conversation list request fails or times out",
+          "copy": { "title": "Couldn't load the inbox", "body": "Relay is reachable but the conversation list didn't come back. Nothing was lost.", "action": "Retry" } }
+      },
+      "acceptance": [
+        "Rows are sorted by waiting time, longest first, before any filter is touched.",
+        "A conversation waiting over 30 minutes shows its wait time in the danger treatment; no other row does.",
+        "An unassigned conversation shows a dash in the Assignee column, not an empty cell.",
+        "Clicking anywhere on a row opens that conversation; there is no separate open control.",
+        "Search matches subject, customer name, and customer email, and nothing else.",
+        "Clearing filters restores the default Open + Anyone view and empties the search field."
+      ]
+    },
+
+    {
+      "id": "conversation",
+      "route": "/inbox/:conversationId",
+      "title": "Conversation",
+      "purpose": "Read the thread, take Relay's draft or write your own, and send one reply.",
+      "device": "desktop",
+      "entryPoints": ["inbox.table"],
+      "regions": [
+        { "id": "conversation.nav", "role": "nav", "components": [
+          { "id": "conversation.nav-side", "type": "nav-side",
+            "props": { "current": "inbox", "destinations": ["Inbox", "Macros", "Settings"] },
+            "action": { "on": "click", "do": "navigate", "target": "macros" } }
+        ] },
+        { "id": "conversation.main", "role": "main", "components": [
+          { "id": "conversation.breadcrumb", "type": "breadcrumb",
+            "props": { "items": ["Inbox", "Refund for a duplicate charge"] },
+            "action": { "on": "click", "do": "navigate", "target": "inbox" } },
+          { "id": "conversation.header", "type": "header",
+            "props": { "title": "Refund for a duplicate charge", "subtitle": "Dana Whitfield · pro · waiting 41m" },
+            "binds": "conversation.subject" },
+          { "id": "conversation.btn-escalate", "type": "button",
+            "props": { "label": "Escalate", "variant": "secondary" },
+            "action": { "on": "click", "do": "open", "target": "conversation.modal-escalate" } },
+          { "id": "conversation.btn-close", "type": "button",
+            "props": { "label": "Close conversation", "variant": "secondary", "note": "sets status to closed in place and shows conversation.toast; the screen does not navigate" },
+            "action": { "on": "click", "do": "none" } },
+          { "id": "conversation.thread", "type": "list",
+            "props": { "rowCount": 3, "order": "oldest first", "trailing": "message.sentAt" },
+            "binds": "message.body" },
+          { "id": "conversation.ai-draft", "type": "banner",
+            "props": { "variant": "info", "dismissible": true, "trigger": "the newest message is inbound and Relay produced a draft",
+              "title": "Relay drafted a reply", "body": "Loaded into the box below. Edit it or clear it — nothing sends on its own." } },
+          { "id": "conversation.form", "type": "form",
+            "props": { "submitAction": "send the reply as an outbound message on this conversation", "validation": "reply body must be non-empty after trimming whitespace" },
+            "action": { "on": "submit", "do": "submit", "target": "conversation.form",
+              "onSuccess": "appends the message to conversation.thread and shows conversation.toast",
+              "onError": "shows conversation.banner-error and keeps the typed text" },
+            "children": [
+              { "id": "conversation.select-macro", "type": "select",
+                "props": { "label": "Insert macro", "options": ["Refund issued", "Escalated to engineering", "Export instructions"], "default": "none", "note": "inserting replaces the box contents and is undoable with one ctrl+z" },
+                "binds": "macro.title",
+                "action": { "on": "change", "do": "none" } },
+              { "id": "conversation.field-reply", "type": "field",
+                "props": { "variant": "textarea", "label": "Reply", "required": true, "placeholder": "Write a reply",
+                  "help": "Sends from support@relay.app", "errorMessage": "Write something before sending." },
+                "binds": "message.body" },
+              { "id": "conversation.btn-send", "type": "button",
+                "props": { "label": "Send reply", "variant": "primary" },
+                "action": { "on": "click", "do": "submit", "target": "conversation.form" } }
+            ] },
+          { "id": "conversation.toast", "type": "toast",
+            "props": { "trigger": "conversation.form submits successfully", "copy": "Reply sent to dana@northloop.io" } }
+        ] },
+        { "id": "conversation.aside", "role": "aside", "components": [
+          { "id": "conversation.customer", "type": "key-value",
+            "props": { "pairs": [
+              { "label": "Customer", "binds": "customer.name" },
+              { "label": "Email", "binds": "customer.email" },
+              { "label": "Plan", "binds": "customer.plan" },
+              { "label": "Customer since", "binds": "customer.signedUpAt" },
+              { "label": "Assignee", "binds": "conversation.assignee" }
+            ] } },
+          { "id": "conversation.link-history", "type": "link",
+            "props": { "label": "See all conversations from Dana", "note": "v2 — the link renders disabled with a tooltip in v1" },
+            "action": { "on": "click", "do": "none" } }
+        ] }
+      ],
+      "states": {
+        "default": { "render": true, "file": "screens/conversation.html" },
+        "empty": { "render": false, "reason": "a conversation exists because a message created it, so the thread is never empty" },
+        "loading": { "render": false, "reason": "opened from inbox.table with the row already in memory; the header paints immediately and only the thread streams in, reusing inbox.loading skeleton rows" },
+        "error": { "render": true, "file": "screens/conversation.error.html",
+          "trigger": "the send request fails; the typed reply is preserved in the box",
+          "copy": { "title": "Reply not sent", "body": "The send failed. Your text is still here — try again, or copy it out before leaving.", "action": "Try again" } }
+      },
+      "acceptance": [
+        "Messages read oldest at the top, newest at the bottom, with the reply box below the newest.",
+        "An outbound message drafted by Relay carries a visible drafted-by-Relay label; a human-written one does not.",
+        "Send is disabled while the reply box is empty or contains only whitespace.",
+        "Inserting a macro replaces the reply box contents and does not send anything.",
+        "A failed send keeps the typed text in the box and shows the error above the form.",
+        "Escalate opens the escalate modal without leaving the conversation."
+      ]
+    },
+
+    {
+      "id": "conversation.modal-escalate",
+      "route": "/inbox/:conversationId?escalate",
+      "title": "Escalate to engineering",
+      "purpose": "Hand a conversation to a team that does not live in the inbox, with a note.",
+      "device": "desktop",
+      "entryPoints": ["conversation.btn-escalate"],
+      "regions": [
+        { "id": "conversation.modal-escalate.main", "role": "main", "components": [
+          { "id": "conversation.modal-escalate.modal", "type": "modal",
+            "props": { "title": "Escalate to engineering", "body": "The conversation stays open in Relay and the customer sees nothing." },
+            "children": [
+              { "id": "conversation.modal-escalate.select-team", "type": "select",
+                "props": { "label": "Team", "options": ["Engineering", "Billing", "Trust & safety"], "default": "Engineering" },
+                "action": { "on": "change", "do": "none" } },
+              { "id": "conversation.modal-escalate.field-note", "type": "field",
+                "props": { "variant": "textarea", "label": "What should they know?", "required": true,
+                  "placeholder": "One or two lines of context", "errorMessage": "Add a line of context before escalating." },
+                "binds": "message.body" },
+              { "id": "conversation.modal-escalate.btn-confirm", "type": "button",
+                "props": { "label": "Escalate", "variant": "primary" },
+                "action": { "on": "click", "do": "submit", "target": "conversation.modal-escalate.modal",
+                  "onSuccess": "closes the modal and shows a toast on conversation",
+                  "onError": "keeps the modal open with the note intact" } },
+              { "id": "conversation.modal-escalate.btn-cancel", "type": "button",
+                "props": { "label": "Cancel", "variant": "secondary" },
+                "action": { "on": "click", "do": "navigate", "target": "conversation" } }
+            ] }
+        ] }
+      ],
+      "states": {
+        "default": { "render": true, "file": "screens/conversation.modal-escalate.html" },
+        "empty": { "render": false, "reason": "a modal with a fixed three-team list has no zero case" },
+        "loading": { "render": false, "reason": "opens instantly over conversation; the team list is static" },
+        "error": { "render": false, "reason": "escalation failures render as an inline-error inside the open modal, not as a page state" }
+      },
+      "acceptance": [
+        "The modal opens over the conversation without changing the URL path segment.",
+        "Escalate is disabled until the note field has content.",
+        "Cancel and the escape key both close the modal and discard the typed note.",
+        "The customer-facing thread is unchanged by escalating."
+      ]
+    },
+
+    {
+      "id": "macros",
+      "route": "/macros",
+      "title": "Macros",
+      "purpose": "See every saved reply, how often it gets used, and retire the ones that don't.",
+      "device": "desktop",
+      "entryPoints": ["nav-side"],
+      "regions": [
+        { "id": "macros.nav", "role": "nav", "components": [
+          { "id": "macros.nav-side", "type": "nav-side",
+            "props": { "current": "macros", "destinations": ["Inbox", "Macros", "Settings"] },
+            "action": { "on": "click", "do": "navigate", "target": "inbox" } }
+        ] },
+        { "id": "macros.main", "role": "main", "components": [
+          { "id": "macros.header", "type": "header",
+            "props": { "title": "Macros", "subtitle": "3 saved replies · 339 uses this quarter" } },
+          { "id": "macros.btn-new", "type": "button",
+            "props": { "label": "New macro", "variant": "primary" },
+            "action": { "on": "click", "do": "navigate", "target": "macro-form" } },
+          { "id": "macros.table", "type": "table",
+            "props": {
+              "columns": [
+                { "label": "Title", "binds": "macro.title", "align": "left", "sorts": true },
+                { "label": "Used", "binds": "macro.usedCount", "align": "right", "sorts": true },
+                { "label": "Updated", "binds": "macro.updatedAt", "align": "right", "sorts": true }
+              ],
+              "rowCount": 3,
+              "sortDefault": "usedCount desc",
+              "rowAction": { "do": "navigate", "target": "macro-form" }
+            } },
+          { "id": "macros.menu", "type": "menu",
+            "props": { "trigger": "…", "items": [
+              { "label": "Edit", "action": { "on": "click", "do": "navigate", "target": "macro-form" } },
+              { "label": "Duplicate", "action": { "on": "click", "do": "navigate", "target": "macro-form" } },
+              { "label": "Delete", "action": { "on": "click", "do": "open", "target": "macros.modal-delete" } }
+            ] } }
+        ] }
+      ],
+      "states": {
+        "default": { "render": true, "file": "screens/macros.html" },
+        "empty": { "render": true, "file": "screens/macros.empty.html",
+          "trigger": "a workspace that has never saved a macro",
+          "copy": { "title": "No macros yet", "body": "Save a reply you send often and it shows up in the conversation composer.", "action": "New macro" } },
+        "loading": { "render": false, "reason": "the macro list is small and ships with the app shell; there is no separate fetch to wait on" },
+        "error": { "render": false, "reason": "macros load with the shell, so a failure here is a failed page load handled by the app-level error boundary" }
+      },
+      "acceptance": [
+        "Macros are sorted by use count, most used first, on load.",
+        "A macro used zero times shows 0, not a blank cell or a dash.",
+        "The row overflow menu offers exactly Edit, Duplicate, and Delete.",
+        "Delete opens the confirm modal and never removes a macro in one click."
+      ]
+    },
+
+    {
+      "id": "macro-form",
+      "route": "/macros/new · /macros/:macroId/edit",
+      "title": "New macro",
+      "purpose": "Write or edit one saved reply.",
+      "device": "desktop",
+      "entryPoints": ["macros.btn-new", "macros.table", "macros.menu"],
+      "regions": [
+        { "id": "macro-form.nav", "role": "nav", "components": [
+          { "id": "macro-form.nav-side", "type": "nav-side",
+            "props": { "current": "macros", "destinations": ["Inbox", "Macros", "Settings"] },
+            "action": { "on": "click", "do": "navigate", "target": "inbox" } }
+        ] },
+        { "id": "macro-form.main", "role": "main", "components": [
+          { "id": "macro-form.breadcrumb", "type": "breadcrumb",
+            "props": { "items": ["Macros", "New macro"] },
+            "action": { "on": "click", "do": "navigate", "target": "macros" } },
+          { "id": "macro-form.header", "type": "header",
+            "props": { "title": "New macro", "subtitle": "Saved replies are workspace-wide — everyone sees this one." } },
+          { "id": "macro-form.form", "type": "form",
+            "props": { "submitAction": "create or update the macro and return to macros", "validation": "title required and unique per workspace; body required" },
+            "action": { "on": "submit", "do": "submit", "target": "macro-form.form",
+              "onSuccess": "navigates to macros with the new row highlighted",
+              "onError": "stays on the form with inline errors and every field preserved" },
+            "children": [
+              { "id": "macro-form.field-title", "type": "field",
+                "props": { "variant": "text", "label": "Title", "required": true, "placeholder": "Refund issued",
+                  "help": "How it appears in the composer dropdown.",
+                  "errorMessage": "A macro with this title already exists." },
+                "binds": "macro.title" },
+              { "id": "macro-form.field-body", "type": "field",
+                "props": { "variant": "textarea", "label": "Reply", "required": true,
+                  "placeholder": "The text that gets inserted into the composer",
+                  "help": "Plain text. No variables in v1.",
+                  "errorMessage": "Write the reply text." },
+                "binds": "macro.body" },
+              { "id": "macro-form.btn-save", "type": "button",
+                "props": { "label": "Save macro", "variant": "primary" },
+                "action": { "on": "click", "do": "submit", "target": "macro-form.form" } },
+              { "id": "macro-form.btn-cancel", "type": "button",
+                "props": { "label": "Cancel", "variant": "secondary", "note": "discards without a confirm; unsaved macro text is cheap to retype" },
+                "action": { "on": "click", "do": "navigate", "target": "macros" } }
+            ] }
+        ] }
+      ],
+      "states": {
+        "default": { "render": true, "file": "screens/macro-form.html" },
+        "empty": { "render": false, "reason": "a create form has no zero state; the edit variant always arrives with a record" },
+        "loading": { "render": false, "reason": "create opens blank; edit is opened from a row already in memory" },
+        "error": { "render": true, "file": "screens/macro-form.error.html",
+          "trigger": "submitted with a duplicate title or an empty body",
+          "copy": { "title": "Macro not saved", "body": "Fix the highlighted fields and save again.", "action": "Save macro" } }
+      },
+      "acceptance": [
+        "Save is disabled until both Title and Reply have content.",
+        "Submitting a title that already exists keeps the user on the form and shows the duplicate message under Title.",
+        "A failed save preserves everything typed in both fields.",
+        "Cancel returns to macros without a confirm prompt.",
+        "Saving returns to macros and the new macro is visible without a manual refresh."
+      ]
+    },
+
+    {
+      "id": "macros.modal-delete",
+      "route": "/macros?delete=:macroId",
+      "title": "Delete macro",
+      "purpose": "Confirm the one destructive action in the product.",
+      "device": "desktop",
+      "entryPoints": ["macros.menu"],
+      "regions": [
+        { "id": "macros.modal-delete.main", "role": "main", "components": [
+          { "id": "macros.modal-delete.confirm", "type": "confirm",
+            "props": { "title": "Delete \"Refund issued\"?",
+              "destroys": "the macro and its use count",
+              "reversible": false,
+              "body": "This macro has been used 214 times. Deleting it does not change any reply already sent." },
+            "children": [
+              { "id": "macros.modal-delete.btn-delete", "type": "button",
+                "props": { "label": "Delete macro", "variant": "danger" },
+                "action": { "on": "click", "do": "submit", "target": "macros.modal-delete.confirm",
+                  "onSuccess": "closes the modal, removes the row, shows an undo toast for 8 seconds",
+                  "onError": "keeps the modal open with an inline error" } },
+              { "id": "macros.modal-delete.btn-cancel", "type": "button",
+                "props": { "label": "Keep it", "variant": "secondary" },
+                "action": { "on": "click", "do": "navigate", "target": "macros" } }
+            ] }
+        ] }
+      ],
+      "states": {
+        "default": { "render": true, "file": "screens/macros.modal-delete.html" },
+        "empty": { "render": false, "reason": "the modal only opens with a macro selected" },
+        "loading": { "render": false, "reason": "opens over macros with the row already in memory" },
+        "error": { "render": false, "reason": "a failed delete renders as an inline-error inside the open modal" }
+      },
+      "acceptance": [
+        "The macro title appears in the confirm heading, so the wrong-row mistake is visible before the click.",
+        "The use count is shown, because a macro used 214 times is a different decision from one used twice.",
+        "Keep it and the escape key both close the modal with nothing deleted.",
+        "Deleting shows an undo toast for eight seconds and restores the macro if undo is pressed."
+      ]
+    }
+  ]
+}

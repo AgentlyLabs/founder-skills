@@ -1,0 +1,37 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>{{meta.product}} — wireframes v{{meta.version}}</title>
+<link rel="stylesheet" href="wireframe.css">
+
+<div class="wf-board">
+  <div>
+    <h1>{{meta.product}} — wireframes</h1>
+    <p class="wf-text" style="margin-top:6px">
+      v{{meta.version}} · {{screens.length}} screens · {{flows.length}} flows.
+      <code>screens.json</code> is the contract; <code>spec.md</code> explains it.
+      Click any screen to open it.
+    </p>
+  </div>
+
+  <!-- one .wf-flow per flow, screens in flow order, arrows between steps -->
+  <section class="wf-flow">
+    <h2>{{flow.label}}</h2>
+    <div class="wf-strip">
+
+      <a class="wf-thumb" href="screens/{{screen.id}}.html">
+        <div class="wf-fr"><iframe src="screens/{{screen.id}}.html" loading="lazy"></iframe></div>
+        <div class="wf-cap">{{screen.title}}<span>{{screen.id}} · {{screen.route}}</span></div>
+      </a>
+
+      <div class="wf-arrow">→</div>
+
+      <!-- … remaining steps … -->
+    </div>
+  </section>
+
+  <!-- final section: every non-default state, so the states are reviewable too -->
+  <section class="wf-flow">
+    <h2>States</h2>
+    <div class="wf-strip"><!-- .empty / .loading / .error thumbs --></div>
+  </section>
+</div>

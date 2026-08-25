@@ -1,0 +1,54 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>{{screen.title}} — {{meta.product}}</title>
+<link rel="stylesheet" href="../wireframe.css">
+
+<!-- Caption strip: identifies the screen and which state this file renders.
+     Keep it. It is how a reviewer knows what they are looking at. -->
+<div class="wf-caption">
+  <b>{{screen.title}}</b>
+  <code>{{screen.id}}</code>
+  <code>{{screen.route}}</code>
+  <span class="wf-state">{{state}}</span>
+</div>
+
+<div class="wf-shell" data-id="{{screen.id}}.shell" data-device="{{screen.device}}">
+
+  <!-- region role="nav" — nav-top goes here; nav-side goes inside .wf-body -->
+  <nav class="wf-nav-top" data-id="{{screen.id}}.nav">
+    <span class="wf-mark">{{meta.product}}</span>
+    <a href="./other-screen.html">Destination</a>
+    <a href="#" aria-current="page">Current</a>
+    <span class="wf-slot"><span class="wf-avatar">DW</span></span>
+  </nav>
+
+  <div class="wf-body">
+
+    <!-- optional region role="nav" (side)
+    <nav class="wf-nav-side" data-id="{{screen.id}}.nav-side"> … </nav> -->
+
+    <!-- region role="main" — exactly one per screen -->
+    <main class="wf-main" data-id="{{screen.id}}.main">
+
+      <header class="wf-header" data-id="{{screen.id}}.header">
+        <div>
+          <h1>{{screen.title}}</h1>
+          <p class="wf-sub">One line of context, bound to real fixture data.</p>
+        </div>
+        <div class="wf-slot">
+          <!-- exactly one data-variant="primary" per screen -->
+          <a class="wf-btn" data-variant="primary"
+             data-id="{{screen.id}}.btn-primary"
+             href="./target-screen.html">Primary action</a>
+        </div>
+      </header>
+
+      <!-- components, in reading order, each with data-id matching screens.json -->
+
+    </main>
+
+    <!-- optional region role="aside"
+    <aside class="wf-aside" data-id="{{screen.id}}.aside"> … </aside> -->
+
+  </div>
+</div>

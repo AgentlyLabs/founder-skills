@@ -19,8 +19,9 @@ reference material and scripts it actually needs — not just a prompt.
 | Fundraising | [`pitch-deck`](skills/pitch-deck) | Investor-grade decks built as HTML and rendered to a 16:9 PDF. A dark editorial design system whose palette is derived from your own website, an eleven-slide narrative arc, and "product artifact" visuals instead of stock imagery. |
 | Sales | [`cold-email`](skills/cold-email) | Cold outbound that reaches an inbox and earns a reply. Audits your sending domain's SPF/DKIM/DMARC against the actual Google and Yahoo bulk-sender rules, applies the consent regime for the recipient's jurisdiction (CAN-SPAM, GDPR/ePrivacy, CASL), and lints the draft against reply rate — not open rate, which is no longer measurable. |
 | Growth | [`seo-audit`](skills/seo-audit) | Full SEO audit from Google Search Console data via MCP — striking-distance queries, CTR gaps measured against the site's own position curve, cannibalization detection, and traffic-decay diagnosis, output as a prioritized report with the impact arithmetic shown. |
+| Product | [`wireframe`](skills/wireframe) | Wireframes an app end to end into a package a coding agent can build 1:1. A `screens.json` contract is the artifact of record, low-fi HTML screens are rendered from it, and a validator blocks the handoff until every state, action, binding, and user-facing string has actually been decided — the decisions a mockup leaves open and a model silently invents. |
 
-"End-to-end" is the goal, not a claim about today. Three functions are covered. Hiring,
+"End-to-end" is the goal, not a claim about today. Four functions are covered. Hiring,
 finance, support, and product analytics are not yet, and this table is the honest scoreboard.
 
 ## Install
