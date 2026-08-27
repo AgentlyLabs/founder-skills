@@ -19,9 +19,10 @@ reference material and scripts it actually needs — not just a prompt.
 | Fundraising | [`pitch-deck`](skills/pitch-deck) | Investor-grade decks built as HTML and rendered to a 16:9 PDF. A dark editorial design system whose palette is derived from your own website, an eleven-slide narrative arc, and "product artifact" visuals instead of stock imagery. |
 | Sales | [`cold-email`](skills/cold-email) | Cold outbound that reaches an inbox and earns a reply. Audits your sending domain's SPF/DKIM/DMARC against the actual Google and Yahoo bulk-sender rules, applies the consent regime for the recipient's jurisdiction (CAN-SPAM, GDPR/ePrivacy, CASL), and lints the draft against reply rate — not open rate, which is no longer measurable. |
 | Growth | [`seo-audit`](skills/seo-audit) | Full SEO audit from Google Search Console data via MCP — striking-distance queries, CTR gaps measured against the site's own position curve, cannibalization detection, and traffic-decay diagnosis, output as a prioritized report with the impact arithmetic shown. |
+| Conversion | [`cro-audit`](skills/cro-audit) | Landing page and funnel audit where every finding cites a measurement taken from the actual page — form and input defects, message match against the ad that paid for the click, trust placement, rendered fold and occlusion — and a validator blocks any claim not traceable to one. Sizes every proposed A/B test against real traffic first, and says plainly when the site cannot run one. |
 | Product | [`wireframe`](skills/wireframe) | Wireframes an app end to end into a package a coding agent can build 1:1. A `screens.json` contract is the artifact of record, low-fi HTML screens are rendered from it, and a validator blocks the handoff until every state, action, binding, and user-facing string has actually been decided — the decisions a mockup leaves open and a model silently invents. |
 
-"End-to-end" is the goal, not a claim about today. Four functions are covered. Hiring,
+"End-to-end" is the goal, not a claim about today. Five functions are covered. Hiring,
 finance, support, and product analytics are not yet, and this table is the honest scoreboard.
 
 ## Install
@@ -48,8 +49,8 @@ Skills upload one at a time, as a zip. Build them all with:
 git clone https://github.com/AgentlyLabs/founder-skills.git && cd founder-skills && ./scripts/package.sh
 ```
 
-That writes `dist/pitch-deck.zip`, `dist/cold-email.zip`, `dist/seo-audit.zip` and
-`dist/wireframe.zip`. Then, in Claude:
+That writes `dist/pitch-deck.zip`, `dist/cold-email.zip`, `dist/seo-audit.zip`,
+`dist/wireframe.zip` and `dist/cro-audit.zip`. Then, in Claude:
 
 1. Open **Settings → Capabilities** and turn on **Code execution and file creation**.
    That toggle is what gates Skills — without it the Skills menu doesn't appear. On Team
@@ -75,6 +76,7 @@ Desktop and claude.ai run it in a sandbox, which changes what some of the script
 | [`cold-email`](skills/cold-email) | Full | Copy linting works; the domain audit needs `dig`, which the sandbox doesn't have |
 | [`pitch-deck`](skills/pitch-deck) | Full | The HTML deck builds; the 16:9 PDF render shells out to Chrome and won't |
 | [`seo-audit`](skills/seo-audit) | Full | Needs a Search Console connector — see below |
+| [`cro-audit`](skills/cro-audit) | Full | Partial — `ab.py` and `verify.py` are pure stdlib and run anywhere; `measure.py` needs outbound HTTP and the rendered checks need browser control, so neither works in the sandbox |
 
 Nothing here is broken on Desktop. The parts that reach outside the sandbox are the parts
 that don't run, and each skill says so rather than guessing at the answer it can't measure.
